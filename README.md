@@ -110,9 +110,16 @@ npm run preview  # preview production build locally
 When connecting this repo to Vercel:
 
 1. Set the framework preset to **Other** (not **React Router**), or rely on [`vercel.json`](vercel.json) (`framework: null`) so the dashboard does not default to a `build/` output folder.
-2. Keep **Build Command** `npm run build` and **Output Directory** `dist/client` (already set in `vercel.json` when overrides are not fighting the file).
+2. In **Build & Development Settings**, either **turn off overrides** for build/output so `vercel.json` wins, or set **Output Directory** to `dist/client` and **Build Command** to `npm run build` explicitly.
+3. Redeploy. The build should complete without `ENOENT ... 'build'`; the **live URL may still show Vercel’s `404: NOT_FOUND`** at `/` — that is expected for this setup (see below).
 
-**Limitation:** Publishing only `dist/client` serves **static assets**; there is no `index.html` at the root—HTML is produced by **SSR** via the Worker. Do not expect the same behavior as `localhost` unless you add a custom serverless/edge setup. For a normal Hydrogen storefront, **Oxygen** is the supported path.
+**Limitation:** Publishing only `dist/client` serves **static assets**; there is no `index.html` at the root—HTML is produced by **SSR** via the Worker in [`server.js`](server.js). **Vercel is not running that Worker**, so the public site will not match `localhost:3000`. For production, deploy to **Oxygen** (requires Shopify CLI login and a linked Hydrogen storefront):
+
+```bash
+npm run deploy
+```
+
+Use Shopify’s [Hydrogen deployment docs](https://shopify.dev/docs/storefronts/headless/hydrogen/deployments) to connect GitHub and environment variables in the Shopify admin.
 
 ---
 
