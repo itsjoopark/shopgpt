@@ -101,6 +101,21 @@ npm run preview  # preview production build locally
 
 ---
 
+## Deployment
+
+**Recommended (production):** Use [Shopify Hydrogen on Oxygen](https://shopify.dev/docs/storefronts/headless/hydrogen/deployments). This app’s [`server.js`](server.js) is an **Oxygen-style Worker** (`fetch` handler with Hydrogen context). `npm run dev` runs **Mini Oxygen**, which is why the storefront matches production on Shopify’s hosting.
+
+**Vercel:** Hydrogen is not wired for Vercel’s first-party **React Router** preset. That preset assumes [`@vercel/react-router`](https://vercel.com/changelog/support-for-react-router-v7) and a different build/runtime shape; Hydrogen’s [`hydrogenPreset()`](https://shopify.dev) conflicts with that adapter (e.g. `serverBundles` / `buildEnd`).
+
+When connecting this repo to Vercel:
+
+1. Set the framework preset to **Other** (not **React Router**), or rely on [`vercel.json`](vercel.json) (`framework: null`) so the dashboard does not default to a `build/` output folder.
+2. Keep **Build Command** `npm run build` and **Output Directory** `dist/client` (already set in `vercel.json` when overrides are not fighting the file).
+
+**Limitation:** Publishing only `dist/client` serves **static assets**; there is no `index.html` at the root—HTML is produced by **SSR** via the Worker. Do not expect the same behavior as `localhost` unless you add a custom serverless/edge setup. For a normal Hydrogen storefront, **Oxygen** is the supported path.
+
+---
+
 ## Customer Account API (local `/account`)
 
 For OAuth and account routes in development, follow Shopify’s public-domain steps:
